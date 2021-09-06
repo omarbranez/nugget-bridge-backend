@@ -54,20 +54,58 @@ require 'poke-api-v2'
 #     Ability.where(ability_hash).first_or_create
 # end
 
-moves = PokeApi.get(move: { limit: 999 }).results
-moves.each do |move|
-    move_hash = {}
-    move_hash[:name] = move.name.titleize
+# moves = PokeApi.get(move: { limit: 999 }).results
+# moves.each do |move|
+#     move_hash = {}
+#     move_hash[:name] = move.name.titleize
+#     # binding.pry
+#     move_hash[:pp] = JSON.parse((Mechanize.new.get(move.url).body))["pp"]
+#     move_hash[:type_id] = Type.find_by(name: JSON.parse((Mechanize.new.get(move.url).body))["type"]["name"].titleize).id
+#     move_hash[:power] = JSON.parse((Mechanize.new.get(move.url).body))["power"]
+#     move_hash[:priority] = JSON.parse((Mechanize.new.get(move.url).body))["priority"]
+#     move_hash[:accuracy] = JSON.parse((Mechanize.new.get(move.url).body))["accuracy"]
+#     move_hash[:effect] = JSON.parse((Mechanize.new.get(move.url).body))["effect_entries"].find { |n| n["language"]["name"] == "en" }["effect"]
+#     move_hash[:effect_chance] = !JSON.parse((Mechanize.new.get(move.url).body))["effect_chance"].nil? ? JSON.parse((Mechanize.new.get(move.url).body))["effect_chance"] : ""
+#     move_hash[:flavor_text] = JSON.parse((Mechanize.new.get(move.url).body))["flavor_text_entries"].find { |n| n["language"]["name"] == "en" && n["version_group"]["name"] == "ultra-sun-ultra-moon" }["flavor_text"].gsub("\n","")
+#     move_hash[:damage_type] = JSON.parse((Mechanize.new.get(move.url).body))["damage_class"]["name"].titleize
+#     Move.where(move_hash).first_or_create
+#     # stopped at 728
+# end
+
+pokemons = PokeApi.get(pokemon: { limit: 151 }).results
+pokemons.each do |pokemon|
+    pokemon_hash = {}
+    pokemon_hash[:name] = pokemon.name #.titleize
+    pokemon_data = JSON.parse((Mechanize.new.get(pokemon.url)).body)
+    
+    pokemon_stats = pokemon_data["stats"]
+    pokemon_hash[:base_hp] = pokemon_stats.first["base_stat"]
+    pokemon_hash[:base_attack] = pokemon_stats.second["base_stat"]
+    pokemon_hash[:base_defense] = pokemon_stats.third["base_stat"]
+    pokemon_hash[:base_special_attack] = pokemon_stats.fourth["base_stat"]
+    pokemon_hash[:base_special_defense] = pokemon_stats.fifth["base_stat"]
+    pokemon_hash[:base_speed] = pokemon_stats[5]["base_stat"]
+    pokemon_hash[:weight] = pokemon_data["weight"]
+
+    pokemon_moves = pokemon_data["moves"]
+    pokemon_moves_array = []
+    pokemon_moves.each do |move|
+        pokemon_moves_array.push(move["move"]["url"].gsub("https://pokeapi.co/api/v2/move/","").gsub("/", ""))
+    end
+    pokemon_hash[:move_list] = pokemon_moves_array.join(", ")
+
+    pokemon_hash[:type_slot_1] = pokemon_data["types"].first["type"]["url"].gsub("https://pokeapi.co/api/v2/type/","").gsub("/","").to_i
+    if !!pokemon_data["types"].second
+        pokemon_hash[:type_slot_2] = pokemon_data["types"].second["type"]["url"].gsub("https://pokeapi.co/api/v2/type/","").gsub("/","").to_i
+    end
+    pokemon_hash[:ability_slot_1] = pokemon_data["abilities"].first["ability"]["url"].gsub("https://pokeapi.co/api/v2/ability/","").gsub("/","").to_i
+    if !!pokemon_data["abilities"].second
+        pokemon_hash[:ability_slot_2] = pokemon_data["abilities"].second["ability"]["url"].gsub("https://pokeapi.co/api/v2/ability/","").gsub("/","").to_i
+    end
+    if !!pokemon_data["abilities"].third
+        pokemon_hash[:ability_slot_3] = pokemon_data["abilities"].third["ability"]["url"].gsub("https://pokeapi.co/api/v2/ability/","").gsub("/","").to_i
+    end
     # binding.pry
-    move_hash[:pp] = JSON.parse((Mechanize.new.get(move.url).body))["pp"]
-    move_hash[:type_id] = Type.find_by(name: JSON.parse((Mechanize.new.get(move.url).body))["type"]["name"].titleize).id
-    move_hash[:power] = JSON.parse((Mechanize.new.get(move.url).body))["power"]
-    move_hash[:priority] = JSON.parse((Mechanize.new.get(move.url).body))["priority"]
-    move_hash[:accuracy] = JSON.parse((Mechanize.new.get(move.url).body))["accuracy"]
-    move_hash[:effect] = JSON.parse((Mechanize.new.get(move.url).body))["effect_entries"].find { |n| n["language"]["name"] == "en" }["effect"]
-    move_hash[:effect_chance] = !JSON.parse((Mechanize.new.get(move.url).body))["effect_chance"].nil? ? JSON.parse((Mechanize.new.get(move.url).body))["effect_chance"] : ""
-    move_hash[:flavor_text] = JSON.parse((Mechanize.new.get(move.url).body))["flavor_text_entries"].find { |n| n["language"]["name"] == "en" && n["version_group"]["name"] == "ultra-sun-ultra-moon" }["flavor_text"].gsub("\n","")
-    move_hash[:damage_type] = JSON.parse((Mechanize.new.get(move.url).body))["damage_class"]["name"].titleize
-    Move.where(move_hash).first_or_create
-    # stopped at 728
+    Pokemon.where(pokemon_hash).first_or_create
+    
 end
