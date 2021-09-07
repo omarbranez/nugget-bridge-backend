@@ -1,27 +1,29 @@
-class TeamPokemonSerializer
+class TeamPokemonSerializer# < ActiveModel::Serializer
     include JSONAPI::Serializer
+    set_key_transform :camel
+
     attributes :pokemon_id,
     :user_id,
-    :ability_id,
-    :inherited_hp,
-    :effort_hp,
-    :inherited_attack,
-    :effort_attack,
-    :inherited_defense,
-    :effort_defense,
-    :inherited_special_attack,
-    :effort_special_attack,
-    :inherited_special_defense,
-    :effort_special_defense,
-    :inherited_speed,
-    :effort_speed,
-    :move_1,
-    :move_2,
-    :move_3,
-    :move_4
+    :ability_id
+    # :inherited_hp,
+    # :effort_hp,
+    # :inherited_attack,
+    # :effort_attack,
+    # :inherited_defense,
+    # :effort_defense,
+    # :inherited_special_attack,
+    # :effort_special_attack,
+    # :inherited_special_defense,
+    # :effort_special_defense,
+    # :inherited_speed,
+    # :effort_speed
+    # :move_1,
+    # :move_2,
+    # :move_3,
+    # :move_4
 
     attribute :name do |pokemon|
-        Pokemon.find(pokemon.id).name
+        Pokemon.find(pokemon.id).name.titleize
     end
 
     attribute :hp_stat do |pokemon|
@@ -68,5 +70,23 @@ class TeamPokemonSerializer
     # :item_id,
     # :shiny
     belongs_to :pokemon
-    # belongs_to :user
+    belongs_to :user
+
+    def team_pokemon
+        self.team_pokemons.collect do |pokemon|
+            {
+                name: Pokemon.find(pokemon.id).name.titleize,
+                hp_stat: TeamPokemon.find(pokemon.user_id).calculate_hp_stat,
+                attack_stat: TeamPokemon.find(pokemon.user_id).calculate_stat("base_attack", "inherited_attack", "effort_attack"),
+                defense_stat: TeamPokemon.find(pokemon.user_id).calculate_stat("base_defense", "inherited_defense", "effort_defense"),
+                special_attack_stat: TeamPokemon.find(pokemon.user_id).calculate_stat("base_special_attack", "inherited_special_attack", "effort_special_attack"),
+                special_defense_stat: TeamPokemon.find(pokemon.user_id).calculate_stat("base_special_defense", "inherited_special_defense", "effort_special_defense"),
+                speed_stat: TeamPokemon.find(pokemon.user_id).calculate_stat("base_speed", "inherited_speed", "effort_speed"),
+                first_move: Move.find(pokemon.move_1).name,
+                second_move: Move.find(pokemon.move_2).name,
+                third_move: Move.find(pokemon.move_3).name,
+                fourth_move: Move.find(pokemon.move_4).name,
+            }    
+        end
+    end
 end

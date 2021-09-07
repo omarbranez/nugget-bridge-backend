@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_06_002014) do
+ActiveRecord::Schema.define(version: 2021_09_07_171719) do
 
   create_table "abilities", force: :cascade do |t|
     t.string "name"
@@ -70,8 +70,6 @@ ActiveRecord::Schema.define(version: 2021_08_06_002014) do
   create_table "pokemons", force: :cascade do |t|
     t.string "name"
     t.string "evolution_level"
-    t.integer "type_list"
-    t.integer "ability_list"
     t.integer "base_hp"
     t.integer "base_attack"
     t.integer "base_defense"
@@ -83,6 +81,13 @@ ActiveRecord::Schema.define(version: 2021_08_06_002014) do
     t.string "gender_list"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "front_sprite"
+    t.string "back_sprite"
+    t.integer "ability_slot_1"
+    t.integer "ability_slot_2"
+    t.integer "ability_slot_3"
+    t.integer "type_slot_1"
+    t.integer "type_slot_2"
   end
 
   create_table "statuses", force: :cascade do |t|
@@ -92,6 +97,7 @@ ActiveRecord::Schema.define(version: 2021_08_06_002014) do
   end
 
   create_table "team_pokemons", force: :cascade do |t|
+    t.integer "user_id"
     t.integer "pokemon_id"
     t.integer "ability_id"
     t.integer "inherited_hp"
@@ -116,6 +122,8 @@ ActiveRecord::Schema.define(version: 2021_08_06_002014) do
     t.boolean "shiny"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "current_status"
+    t.integer "current_hp"
   end
 
   create_table "types", force: :cascade do |t|
@@ -140,4 +148,5 @@ ActiveRecord::Schema.define(version: 2021_08_06_002014) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "team_pokemons", "users", primary_key: "id"
 end
