@@ -8,8 +8,6 @@ class TeamPokemon < ActiveRecord::Base
     belongs_to :user
     belongs_to :pokemon
     
-    effort_attribute_array = ["effort_hp", "effort_attack", "effort_defense", "effort_special_attack", "effort_special_defense", "effort_speed"]
-    # @team = []
     def new_team_pokemon
         Pokemon.order(Arel.sql('RANDOM()')).first.id
     end
@@ -29,13 +27,16 @@ class TeamPokemon < ActiveRecord::Base
     end
 
     def generate_random_ivs
-        # steps = [1,2,3,4,5,6]
         iv_values = []
-        # steps.each do |step|
         6.times do
-            iv_values.push(rand(0..(32)))
+            iv_values.push(rand(0..(31)))
         end
-        iv_values
+        self.inherited_hp = iv_values[0]
+        self.inherited_attack = iv_values[1]
+        self.inherited_defense = iv_values[2]
+        self.inherited_special_attack = iv_values[3]
+        self.inherited_special_defense = iv_values[4]
+        self.inherited_speed = iv_values[5]
     end
     
     def generate_random_evs
@@ -55,10 +56,40 @@ class TeamPokemon < ActiveRecord::Base
             maxEVs = maxEVs - evValue
             ev_values.push(evValue)
         end
-        ev_values
+        self.effort_hp = ev_values[0]
+        self.effort_attack = ev_values[1]
+        self.effort_defense = ev_values[2]
+        self.effort_special_attack = ev_values[3]
+        self.effort_special_defense = ev_values[4]
+        self.effort_speed = ev_values[5]
     end
-    def self.generate_moves
-        # self.move_1
 
+    def possible_move_list(pokemon_id) # probably for pokemon model. but really for funsies
+        pokemon = Pokemon.find(pokemon_id)
+        pokemon.move_list.split(", ").each do |move|
+            puts Move.find(move).name
+        end
+    end
+
+    def generate_move_set
+        pokemon = Pokemon.find(self.pokemon_id)
+        pokemon_moves = pokemon.move_list.split(", ").shuffle.take(4).map {|move_id| Move.find(move_id).id}
+        self.move_1 = pokemon_moves[0]
+        self.move_2 = pokemon_moves[1]
+        self.move_3 = pokemon_moves[2]
+        self.move_4 = pokemon_moves[3]
+    end
+
+    def generate_attributes
+        generate_move_set
+        generate_random_evs
+        generate_random_ivs
+        self.save
+    end
+
+    def self.team_generate_attributes
+        TeamPokemon.where(user_id: 1).each do |pokemon|
+            pokemon.generate_attributes
+        end
     end
 end
