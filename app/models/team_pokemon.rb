@@ -7,6 +7,10 @@ class TeamPokemon < ActiveRecord::Base
     # has_many :pokemon
     belongs_to :user
     belongs_to :pokemon
+
+    after_update :check_current_status
+    after_update :check_current_hp
+    after_update :replace_team_pokemon
     
     # def new_team_pokemon
     #     # binding.pry
@@ -86,6 +90,7 @@ class TeamPokemon < ActiveRecord::Base
         generate_move_set
         generate_random_evs
         generate_random_ivs
+        self.current_hp = calculate_hp_stat
         self.save
     end
 
@@ -113,6 +118,16 @@ class TeamPokemon < ActiveRecord::Base
         # movelist = [self.move_1, self.move_2, self.move_3, self.move_4]
         # movelist.map { |move| Move.find(move).name }
         Move.find(move_number).name
+    end
+
+    def check_current_hp
+        if self.current_hp <= 0
+            self.destroy
+        end
+    end
+
+    def check_current_status
+
     end
 
 end
