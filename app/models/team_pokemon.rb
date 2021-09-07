@@ -8,21 +8,23 @@ class TeamPokemon < ActiveRecord::Base
     belongs_to :user
     belongs_to :pokemon
     
-    def new_team_pokemon
-        Pokemon.order(Arel.sql('RANDOM()')).first.id
-    end
+    # def new_team_pokemon
+    #     # binding.pry
+    #     return Pokemon.order(Arel.sql('RANDOM()')).first.id
+    # end
 
-    def generate_new_team
-        if current_user.pokemon.count == 0
+    def self.generate_new_team
+        if User.second.pokemon.count == 0
             6.times do
-                TeamPokemon.create(user_id: current_user.id, pokemon_id: new_team_pokemon)
+                binding.pry
+                TeamPokemon.create(user_id: 2, pokemon_id: Pokemon.order(Arel.sql('RANDOM()')).first.id)
             end
         end
     end
     
     def replace_team_pokemon
         until current_user.pokemon.count == 6
-            TeamPokemon.create(user_id: current_user.id, pokemon_id: new_team_pokemon)
+            TeamPokemon.create(user_id: current_user.id, pokemon_id: Pokemon.order(Arel.sql('RANDOM()')).first.id)
         end
     end
 
@@ -88,8 +90,29 @@ class TeamPokemon < ActiveRecord::Base
     end
 
     def self.team_generate_attributes
-        TeamPokemon.where(user_id: 1).each do |pokemon|
+        TeamPokemon.where(user_id: 2).each do |pokemon|
             pokemon.generate_attributes
         end
     end
+
+    def calculate_hp_stat
+        level = 100 # all pokemon are level 100
+        user = User.find(self.user_id)
+        ((2 * user.pokemon.find(self.pokemon_id).base_hp + self.inherited_hp + (self.effort_hp / 4)) * level )/100 + level + 10
+    end
+
+    def calculate_stat(base_stat, iv_stat, ev_stat) #quotes, to use in send
+        level = 100
+        nature = 1 # not using natures yet
+        user = User.find(self.user_id)
+        (((((2 * user.pokemon.find(self.pokemon_id).send(base_stat) + self.send(iv_stat) + (self.send(ev_stat) / 4)) * level) / 100 ) + 5 ) * nature)
+    end
+
+    def parse_move(move_number)
+        user = User.find(self.user_id)
+        # movelist = [self.move_1, self.move_2, self.move_3, self.move_4]
+        # movelist.map { |move| Move.find(move).name }
+        Move.find(move_number).name
+    end
+
 end
