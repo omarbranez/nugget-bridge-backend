@@ -1,0 +1,25 @@
+class TeamPokemonSerializer
+    include JSONAPI::Serializer
+    attributes :pokemon_id,
+    :ability_id,
+    :inherited_hp,
+    :effort_hp,
+    :inherited_attack,
+    :effort_attack,
+    :inherited_defense,
+    :effort_defense,
+    :inherited_special_attack,
+    :effort_special_attack,
+    :inherited_special_defense,
+    :effort_special_defense,
+    :inherited_speed,
+    :effort_speed,
+    :move_1,
+    :move_2,
+    :move_3,
+    :move_4,
+    :gender_id,
+    :nature_id,
+    :item_id,
+    :shiny
+end
