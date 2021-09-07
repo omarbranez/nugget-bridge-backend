@@ -14,9 +14,9 @@ class TeamPokemon < ActiveRecord::Base
     # end
 
     def self.generate_new_team
-        if User.second.pokemon.count == 0
+        if User.second.pokemon.count == 0 # cpu player
             6.times do
-                binding.pry
+                # binding.pry
                 TeamPokemon.create(user_id: 2, pokemon_id: Pokemon.order(Arel.sql('RANDOM()')).first.id)
             end
         end
