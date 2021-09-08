@@ -107,17 +107,3 @@ require 'poke-api-v2'
 #     end
 #     # binding.pry
 #     Pokemon.where(pokemon_hash).first_or_create
-def generate_move_set(team_pokemon_id)
-    # moveset_array = []
-    pokemon = Pokemon.find(TeamPokemon.find(team_pokemon_id).pokemon_id)
-    pokemon_moves = pokemon.move_list.split(", ").shuffle.take(4).map {|move_id| Move.find(move_id).name}
-    # binding.pry
-    puts pokemon_moves
-    self.move_1 = pokemon_moves[0]
-    self.move_2 = pokemon_moves[1]
-    self.move_3 = pokemon_moves[2]
-    self.move_4 = pokemon_moves[3]
-
-end
-
-generate_move_set(5)

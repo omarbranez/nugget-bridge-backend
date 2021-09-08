@@ -2,12 +2,13 @@ class UserSerializer# < ActiveModel::Serializer
     include JSONAPI::Serializer
     set_key_transform :camel_lower
     has_many :team_pokemons, serializer: TeamPokemonSerializer
-    # if: Proc.new { |record| record.team_pokemons.any? }
 
-    attributes :name, :team_size#, :team_pokemons
+
+    attributes :name, :team_size
     attributes :my_team do |user|
         user.team_pokemons.collect do |pokemon|
             {
+                userID: pokemon.user_id,
                 position: pokemon.position,
                 name: Pokemon.find(pokemon.pokemon_id).name.titleize,
                 currentHP: pokemon.current_hp,
@@ -21,18 +22,22 @@ class UserSerializer# < ActiveModel::Serializer
                 firstMove: Move.find(pokemon.move_1).name,
                 secondMove: Move.find(pokemon.move_2).name,
                 thirdMove: Move.find(pokemon.move_3).name,
-                fourthMove: Move.find(pokemon.move_4).name,
+                fourthMove: Move.find(pokemon.move_4).name
             }
         end
     end
-    def team
-        object.team_pokemons.map do |pokemon|
-            ::TeamPokemonSerializer.new(pokemon).attributes
-        end
-    end
+    
     meta do |user|
         {
             TeamSize: user.team_pokemons.count
         }
     end
+
+
+    def team
+        object.team_pokemons.map do |pokemon|
+            ::TeamPokemonSerializer.new(pokemon).attributes
+        end
+    end
+
 end

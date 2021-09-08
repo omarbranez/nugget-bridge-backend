@@ -8,9 +8,9 @@ class TeamPokemon < ActiveRecord::Base
     belongs_to :user
     belongs_to :pokemon
 
-    after_update :check_current_status
+    after_update :check_current_status # order is important
     after_update :check_current_hp
-    after_update :replace_team_pokemon
+    # after_update :replace_team_pokemon
     
     # def new_team_pokemon
     #     # binding.pry
@@ -121,13 +121,14 @@ class TeamPokemon < ActiveRecord::Base
     end
 
     def check_current_hp
+        self.update(current_hp: params[:hp])
         if self.current_hp <= 0
             self.destroy
         end
     end
 
     def check_current_status
-
+        self.update(current_status: params[:status])
     end
 
 end

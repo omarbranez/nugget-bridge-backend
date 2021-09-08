@@ -6,6 +6,6 @@ class TeamPokemonsController < ApplicationController
 
     def show
         team_pokemon = TeamPokemon.where(user_id: params[:id])
-        render json: TeamPokemonSerializer.new(team_pokemon).serializable_hash_to_json
+        render json: TeamPokemonSerializer.new(team_pokemon)
     end
 end

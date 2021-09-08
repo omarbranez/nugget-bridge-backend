@@ -3,4 +3,5 @@ Rails.application.routes.draw do
   resources :pokemons
   resources :team_pokemons
   resources :users
+  resources :moves
 end
