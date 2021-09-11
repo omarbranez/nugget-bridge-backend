@@ -7,6 +7,8 @@ class TeamPokemon < ActiveRecord::Base
     # has_many :pokemon
     belongs_to :user
     belongs_to :pokemon
+    belongs_to :type
+    belongs_to :move
 
     after_create :set_hp_to_max
     after_update :check_current_status # order is important

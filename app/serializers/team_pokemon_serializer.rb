@@ -1,6 +1,9 @@
 class TeamPokemonSerializer# < ActiveModel::Serializer
     include JSONAPI::Serializer
     set_key_transform :camel
+    belongs_to :pokemon, serializer: TypeSerializer
+    # belongs_to :move, serializer: MoveSerializer
+    belongs_to :user, serializer: UserSerializer
 
     attributes :pokemon_id,
     :user_id,

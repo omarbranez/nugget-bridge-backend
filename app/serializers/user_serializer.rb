@@ -2,6 +2,7 @@ class UserSerializer# < ActiveModel::Serializer
     include JSONAPI::Serializer
     set_key_transform :camel_lower
     has_many :team_pokemons, serializer: TeamPokemonSerializer
+    # has_many :moves, through: team_pokemons, serializer: MoveSerializer
 
 
     attributes :name, :team_size
@@ -21,18 +22,15 @@ class UserSerializer# < ActiveModel::Serializer
                 specialAttackStat: pokemon.calculate_stat("base_special_attack", "inherited_special_attack", "effort_special_attack"),
                 specialDefenseStat: pokemon.calculate_stat("base_special_defense", "inherited_special_defense", "effort_special_defense"),
                 speedStat: pokemon.calculate_stat("base_speed", "inherited_speed", "effort_speed"),
-                firstMove: Move.find(pokemon.move_1),
-                firstMoveType: Type.find(Move.find(pokemon.move_1).type_id),
-                secondMove: Move.find(pokemon.move_2),
-                secondMoveType: Type.find(Move.find(pokemon.move_2).type_id),
-                thirdMove: Move.find(pokemon.move_3),
-                thidMoveType: Type.find(Move.find(pokemon.move_3).type_id),
-                fourthMove: Move.find(pokemon.move_4),
-                fourthMoveType: Type.find(Move.find(pokemon.move_4).type_id)
+                firstMove:  MoveSerializer.new(Move.find(pokemon.move_1)),
+                secondMove: MoveSerializer.new(Move.find(pokemon.move_2)),
+                thirdMove: MoveSerializer.new(Move.find(pokemon.move_3)),
+                fourthMove: MoveSerializer.new(Move.find(pokemon.move_4))
             }
         end
     end
-    
+
+
     meta do |user|
         {
             TeamSize: user.team_pokemons.count
