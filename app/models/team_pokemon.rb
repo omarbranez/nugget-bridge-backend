@@ -8,6 +8,7 @@ class TeamPokemon < ActiveRecord::Base
     belongs_to :user
     belongs_to :pokemon
 
+    after_create :set_hp_to_max
     after_update :check_current_status # order is important
     after_update :check_current_hp
     # after_update :replace_team_pokemon
@@ -131,4 +132,7 @@ class TeamPokemon < ActiveRecord::Base
         self.update(current_status: params[:status])
     end
 
+    def set_hp_to_max
+        self.current_hp = calculate_hp_stat
+    end
 end
