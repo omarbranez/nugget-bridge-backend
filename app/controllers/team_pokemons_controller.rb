@@ -5,7 +5,22 @@ class TeamPokemonsController < ApplicationController
     end
 
     def show
-        team_pokemon = TeamPokemon.where(user_id: params[:id])
+        team_pokemon = TeamPokemon.find_by(id: params[:id])
+        options = {
+            include: [:user]
+        }
+        render json: TeamPokemonSerializer.new(team_pokemon, options).serializable_hash.to_json
+    end
+
+    def update
+        team_pokemon = TeamPokemon.find_by(id: params[:id])
+        team_pokemon.update(team_pokemon_params) #maybe user can accept nested attributes for teampokemons
         render json: TeamPokemonSerializer.new(team_pokemon)
+    end
+
+    private
+
+    def team_pokemon_params
+        params.permit(:id, :current_status, :current_hp, :position)
     end
 end

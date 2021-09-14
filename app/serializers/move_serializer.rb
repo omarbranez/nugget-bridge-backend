@@ -20,12 +20,11 @@
 class MoveSerializer
     include JSONAPI::Serializer
     set_key_transform :camel_lower
-    # has_many :team_pokemon, serializer: TeamPokemonSerializer
     belongs_to :type, serializer: TypeSerializer
     
     attributes :name, :pp
     attributes :type do |move|
-        Type.find(move.type_id)
+        Type.find(move.type_id) # may insert TypeSerializer.new so we can do a split on the effectiveness strings
     end
     attributes :power,
     :priority,
