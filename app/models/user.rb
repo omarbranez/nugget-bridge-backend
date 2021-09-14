@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-    has_many :team_pokemons
+    has_many :team_pokemons, dependent: :destroy
     has_many :pokemon, through: :team_pokemons
 
     after_create :set_initial_states

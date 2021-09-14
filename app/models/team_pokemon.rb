@@ -29,7 +29,7 @@ class TeamPokemon < ActiveRecord::Base
     end
 
     def set_status_to_none
-        self.current_status = "none"
+        self.current_status = "None"
     end
 
     def generate_attributes

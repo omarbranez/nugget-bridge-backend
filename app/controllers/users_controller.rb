@@ -22,6 +22,6 @@ class UsersController < ApplicationController
     private
 
     def user_params
-        params.permit(:name, :victories)
+        params.permit(:name, :victories, :user_type)
     end
 end
