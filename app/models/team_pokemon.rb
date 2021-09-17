@@ -10,6 +10,7 @@ class TeamPokemon < ActiveRecord::Base
     belongs_to :type, required: false
 
     after_create :set_status_to_none
+    after_create :set_position
     after_create :generate_attributes
     after_create :set_hp_to_max
 
@@ -22,6 +23,11 @@ class TeamPokemon < ActiveRecord::Base
 
     def set_status_to_none
         self.current_status = "None"
+    end
+
+    def set_position
+        user = User.find(self.user_id)
+        self.position = user.team_pokemons.find_index(self) + 1
     end
 
     def generate_attributes

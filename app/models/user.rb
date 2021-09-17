@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
 
     after_create :set_initial_states
     after_create :generate_new_team
-    after_update :set_team_size # will update on victories ++
+    after_create :set_team_size # will update on victories ++
     after_update :seed_opponent # will update on victories ++
 
     
@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
     def generate_new_team
         6.times do
             TeamPokemon.create!(user_id: self.id, pokemon_id: Pokemon.order(Arel.sql('RANDOM()')).first.id)
+            self.team_size + 1
         end
     end
     
