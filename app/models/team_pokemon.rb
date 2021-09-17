@@ -16,14 +16,6 @@ class TeamPokemon < ActiveRecord::Base
     # after_update :check_current_status # order is important # it's already posted
     after_update :check_current_hp
 
-    # after_destroy :replace_team_pokemon
-    # after_update :replace_team_pokemon
-    
-    # def new_team_pokemon
-    #     # binding.pry
-    #     return Pokemon.order(Arel.sql('RANDOM()')).first.id
-    # end
-
     def set_hp_to_max
         self.current_hp = calculate_hp_stat
     end
@@ -143,7 +135,7 @@ class TeamPokemon < ActiveRecord::Base
         user = User.find(self.user_id)
         self.destroy
         until user.team_pokemons.count == 6
-            binding.pry
+            # binding.pry
             TeamPokemon.create(user_id: user.id, pokemon_id: Pokemon.order(Arel.sql('RANDOM()')).first.id)
         end
     end

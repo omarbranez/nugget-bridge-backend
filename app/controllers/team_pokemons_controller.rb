@@ -1,4 +1,5 @@
 class TeamPokemonsController < ApplicationController
+    skip_before_action :verify_authenticity_token
     def index
         team_pokemons = TeamPokemon.all
         render json: TeamPokemonSerializer.new(team_pokemons)
@@ -13,6 +14,7 @@ class TeamPokemonsController < ApplicationController
     end
 
     def update
+        # binding.pry
         team_pokemon = TeamPokemon.find_by(id: params[:id])
         team_pokemon.update(team_pokemon_params) #maybe user can accept nested attributes for teampokemons
         render json: TeamPokemonSerializer.new(team_pokemon)

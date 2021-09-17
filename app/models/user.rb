@@ -1,11 +1,11 @@
 class User < ActiveRecord::Base
-    has_many :team_pokemons, dependent: :destroy
+    has_many :team_pokemons#, dependent: :destroy
     has_many :pokemon, through: :team_pokemons
 
     after_create :set_initial_states
     after_create :generate_new_team
-    after_update :set_team_size
-    after_update :seed_opponent
+    after_update :set_team_size # will update on victories ++
+    after_update :seed_opponent # will update on victories ++
 
     
     def set_initial_states

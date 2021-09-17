@@ -4,4 +4,5 @@ Rails.application.routes.draw do
   resources :team_pokemons
   resources :users
   resources :moves
+  post '/login', to: 'users#login'
 end
