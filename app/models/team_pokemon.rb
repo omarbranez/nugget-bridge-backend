@@ -41,11 +41,18 @@ class TeamPokemon < ActiveRecord::Base
 
     def generate_move_set
         pokemon = Pokemon.find(self.pokemon_id)
-        pokemon_moves = pokemon.move_list.split(", ").shuffle.take(4).map {|move_id| Move.find(move_id).id}
-        self.move_1 = pokemon_moves[0]
-        self.move_2 = pokemon_moves[1]
-        self.move_3 = pokemon_moves[2]
-        self.move_4 = pokemon_moves[3]
+        if Pokemon.find(pokemon.id) == 132 # ditto only has one move: transform
+            self.move_1 = Move.find(144)
+            self.move_2 = Move.find(144)
+            self.move_3 = Move.find(144)
+            self.move_4 = Move.find(144)
+        else
+            pokemon_moves = pokemon.move_list.split(", ").shuffle.take(4).map {|move_id| Move.find(move_id).id}
+            self.move_1 = pokemon_moves[0]
+            self.move_2 = pokemon_moves[1]
+            self.move_3 = pokemon_moves[2]
+            self.move_4 = pokemon_moves[3]
+        end
     end
 
     def generate_random_evs

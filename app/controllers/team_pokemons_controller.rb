@@ -16,8 +16,10 @@ class TeamPokemonsController < ApplicationController
     def update
         # binding.pry
         team_pokemon = TeamPokemon.find_by(id: params[:id])
-        team_pokemon.update(team_pokemon_params) #maybe user can accept nested attributes for teampokemons
-        render json: TeamPokemonSerializer.new(team_pokemon)
+        team_pokemon.update(team_pokemon_params)
+        if team_pokemon#maybe user can accept nested attributes for teampokemons
+            render json: TeamPokemonSerializer.new(team_pokemon)
+        end
     end
 
     private

@@ -8,6 +8,9 @@ class TeamPokemonSerializer# < ActiveModel::Serializer
     attribute :user_id do |team_pokemon|
         team_pokemon.user_id
     end 
+    attribute :pokemon_id do |team_pokemon|
+        team_pokemon.pokemon_id
+    end
     attribute :team_pokemon_id do |team_pokemon|
         team_pokemon.id
     end 
